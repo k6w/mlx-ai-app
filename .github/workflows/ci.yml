@@ -1,0 +1,22 @@
+name: CI
+on:
+  push: {branches: [main]}
+  pull_request:
+permissions: {contents: read}
+jobs:
+  build-test:
+    runs-on: macos-14
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v6
+      - run: make test
+      - name: Build application
+        run: |
+          export UV_BINARY="$(command -v uv)"
+          make app
+      - name: Verify bundle
+        run: |
+          codesign --verify --deep --strict '.build/MLX AI.app'
+          test "$(plutil -extract LSUIElement raw '.build/MLX AI.app/Contents/Info.plist')" = true
+          test -x '.build/MLX AI.app/Contents/Resources/uv'
+          test -x '.build/MLX AI.app/Contents/Resources/mlx-ai'

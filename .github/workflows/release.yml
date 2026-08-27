@@ -1,0 +1,44 @@
+name: Release
+on:
+  push: {tags: ['v*']}
+permissions: {contents: write}
+jobs:
+  release:
+    runs-on: macos-14
+    steps:
+      - uses: actions/checkout@v4
+      - uses: astral-sh/setup-uv@v6
+      - name: Import Developer ID certificate
+        env:
+          CERTIFICATE: ${{ secrets.DEVELOPER_ID_CERTIFICATE_P12 }}
+          CERTIFICATE_PASSWORD: ${{ secrets.DEVELOPER_ID_CERTIFICATE_PASSWORD }}
+        run: |
+          echo "$CERTIFICATE" | base64 --decode > "$RUNNER_TEMP/developer-id.p12"
+          security create-keychain -p actions "$RUNNER_TEMP/signing.keychain-db"
+          security set-keychain-settings -lut 21600 "$RUNNER_TEMP/signing.keychain-db"
+          security unlock-keychain -p actions "$RUNNER_TEMP/signing.keychain-db"
+          security import "$RUNNER_TEMP/developer-id.p12" -P "$CERTIFICATE_PASSWORD" -A -t cert -f pkcs12 -k "$RUNNER_TEMP/signing.keychain-db"
+          security set-key-partition-list -S apple-tool:,apple: -k actions "$RUNNER_TEMP/signing.keychain-db"
+          security list-keychain -d user -s "$RUNNER_TEMP/signing.keychain-db"
+      - run: make test
+      - name: Build signed DMG
+        env:
+          VERSION: ${{ github.ref_name }}
+          BUILD_NUMBER: ${{ github.run_number }}
+          MACOS_SIGN_IDENTITY: ${{ secrets.MACOS_SIGN_IDENTITY }}
+        run: |
+          export VERSION="${VERSION#v}"
+          export UV_BINARY="$(command -v uv)"
+          make dmg
+      - name: Notarize and verify
+        env:
+          APPLE_ID: ${{ secrets.APPLE_ID }}
+          APPLE_TEAM_ID: ${{ secrets.APPLE_TEAM_ID }}
+          APPLE_APP_PASSWORD: ${{ secrets.APPLE_APP_PASSWORD }}
+        run: |
+          DMG="$(find .build -maxdepth 1 -name 'MLX-AI-*.dmg' -print -quit)"
+          ./scripts/notarize.sh "$DMG"
+          spctl --assess --type open --context context:primary-signature -v "$DMG"
+      - name: Publish GitHub Release
+        env: {GH_TOKEN: '${{ github.token }}'}
+        run: gh release create "${GITHUB_REF_NAME}" .build/MLX-AI-*.dmg --verify-tag --generate-notes

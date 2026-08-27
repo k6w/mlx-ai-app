@@ -1,0 +1,9 @@
+.build/
+.DS_Store
+*.previous.app
+*.dmg
+*.p12
+*.cer
+*.keychain-db
+.swiftpm/
+.env
