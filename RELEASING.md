@@ -1,13 +1,6 @@
 # Releasing
 
-Releases build from `v*` tags through `.github/workflows/release.yml`.
-
-Configure these GitHub Actions secrets:
-
-- `DEVELOPER_ID_CERTIFICATE_P12`: base64 Developer ID Application certificate.
-- `DEVELOPER_ID_CERTIFICATE_PASSWORD`: certificate export password.
-- `MACOS_SIGN_IDENTITY`: full Developer ID Application identity.
-- `APPLE_ID`, `APPLE_TEAM_ID`, and `APPLE_APP_PASSWORD`: notarization credentials.
+Releases build from `v*` tags through `.github/workflows/release.yml`. They are intentionally ad-hoc signed: no Developer ID certificate, Apple ID, team identifier, notarization credential, or personal email is used.
 
 Update the changelog, commit, and push a semantic-version tag:
 
@@ -16,4 +9,6 @@ git tag v1.0.0
 git push origin main v1.0.0
 ```
 
-The workflow bundles `uv`, tests, signs with hardened runtime, creates and signs a DMG, notarizes and staples it, verifies Gatekeeper acceptance, and publishes a GitHub Release.
+The workflow bundles the `uv` runtime bootstrap, runs the full test suite, creates the DMG, verifies that the app signature is ad hoc, and publishes a GitHub Release. No repository secrets are required.
+
+Because the release is not notarized, macOS Gatekeeper may ask users to right-click the app and choose **Open**, or approve it from **System Settings → Privacy & Security**.

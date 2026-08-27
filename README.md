@@ -21,7 +21,7 @@ MLX AI starts, monitors, and stops an OpenAI-compatible [`mlx_lm.server`](https:
 - OpenAI-compatible API at `http://127.0.0.1:8080/v1`.
 - Optional companion CLI with human-readable and JSON status.
 - Failure notifications, login controls, safe log rotation, and external-process protection.
-- Signed and notarized DMG release pipeline for Apple Silicon Macs.
+- Reproducible ad-hoc-signed DMG releases with no Developer ID identity attached.
 
 ## Screenshots
 
@@ -46,8 +46,9 @@ MLX AI starts, monitors, and stops an OpenAI-compatible [`mlx_lm.server`](https:
 
 1. Download the latest `MLX-AI-*.dmg` from [Releases](https://github.com/k6w/mlx-ai-app/releases/latest).
 2. Drag **MLX AI** to Applications.
-3. Open it and choose **Install Runtime**.
-4. Click **Start Server**. The default model downloads on first use.
+3. Right-click the app and choose **Open** the first time. If macOS blocks it, use **System Settings → Privacy & Security → Open Anyway**.
+4. Choose **Install Runtime**.
+5. Click **Start Server**. The default model downloads on first use.
 
 The runtime lives under `~/Library/Application Support/MLX AI`. Existing installations using `~/.mlx-venv` are adopted automatically.
 
@@ -75,7 +76,7 @@ make dmg
 
 For a clean-Mac bootstrap, place arm64 `uv` on `PATH` or set `UV_BINARY=/path/to/uv`. Without it, the app can adopt an existing environment but cannot install a new one.
 
-Local builds are ad-hoc signed. Release signing uses `MACOS_SIGN_IDENTITY`; see [RELEASING.md](RELEASING.md).
+Local and release builds are intentionally ad-hoc signed and contain no Developer ID or Apple account identity. See [RELEASING.md](RELEASING.md).
 
 ## Architecture
 
