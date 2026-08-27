@@ -206,4 +206,25 @@ final class AppModel: ObservableObject {
         content.sound = .default
         try? await UNUserNotificationCenter.current().add(UNNotificationRequest(identifier: UUID().uuidString, content: content, trigger: nil))
     }
+
+    func configureForScreenshot(state: ServerState, setup: Bool = false) {
+        pollingTask?.cancel()
+        runtimeChecked = true
+        runtimeReady = !setup
+        isWorking = false
+        errorMessage = nil
+        setupDetail = setup ? "Install the private MLX runtime to continue." : "Runtime ready"
+        let detail: String
+        switch state {
+        case .running: detail = "OpenAI-compatible API is ready"
+        case .stopped: detail = "Start the local model when you need it"
+        default: detail = state.title
+        }
+        status = StatusSnapshot(
+            state: state, detail: detail, pid: state == .running ? 4812 : nil,
+            endpoint: configuration.endpoint.absoluteString, model: configuration.model,
+            rssBytes: state == .running ? 4_174_774_272 : nil,
+            uptimeSeconds: state == .running ? 8_712 : nil
+        )
+    }
 }

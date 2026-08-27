@@ -16,6 +16,17 @@ final class AppDelegate: NSObject, NSApplicationDelegate {
 
     func applicationDidFinishLaunching(_ notification: Notification) {
         NSApp.setActivationPolicy(.accessory)
+        if let flag = CommandLine.arguments.firstIndex(of: "--export-screenshots"),
+           CommandLine.arguments.indices.contains(flag + 1) {
+            do {
+                try ScreenshotExporter.export(to: URL(fileURLWithPath: CommandLine.arguments[flag + 1], isDirectory: true), model: model)
+                NSApp.terminate(nil)
+            } catch {
+                fputs("MLX AI screenshot export failed: \(error.localizedDescription)\n", stderr)
+                NSApp.terminate(nil)
+            }
+            return
+        }
         statusItem = NSStatusBar.system.statusItem(withLength: 28)
         statusItem.button?.target = self
         statusItem.button?.action = #selector(togglePopover)

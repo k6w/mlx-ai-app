@@ -23,6 +23,22 @@ MLX AI starts, monitors, and stops an OpenAI-compatible [`mlx_lm.server`](https:
 - Failure notifications, login controls, safe log rotation, and external-process protection.
 - Signed and notarized DMG release pipeline for Apple Silicon Macs.
 
+## Screenshots
+
+<table>
+  <tr>
+    <td align="center"><strong>Running · Dark</strong></td>
+    <td align="center"><strong>Stopped · Light</strong></td>
+  </tr>
+  <tr>
+    <td><img src="docs/screenshots/mlx-ai-running-dark.png" alt="MLX AI menu showing a healthy running model in dark mode" width="336"></td>
+    <td><img src="docs/screenshots/mlx-ai-stopped-light.png" alt="MLX AI menu showing the stopped state in light mode" width="336"></td>
+  </tr>
+</table>
+
+<p align="center"><strong>Private, guided first-run setup</strong></p>
+<p align="center"><img src="docs/screenshots/mlx-ai-first-run.png" alt="MLX AI first-run runtime installation screen" width="336"></p>
+
 ## Requirements
 
 - Apple Silicon Mac running macOS 13 Ventura or newer
@@ -63,6 +79,12 @@ make dmg
 For a clean-Mac bootstrap, place arm64 `uv` on `PATH` or set `UV_BINARY=/path/to/uv`. Without it, the app can adopt an existing environment but cannot install a new one.
 
 Local builds are ad-hoc signed. Release signing uses `MACOS_SIGN_IDENTITY`; see [RELEASING.md](RELEASING.md).
+
+Maintainers can regenerate the production UI screenshots without capturing the desktop:
+
+```sh
+'.build/MLX AI.app/Contents/MacOS/MLXAI' --export-screenshots "$PWD/docs/screenshots"
+```
 
 ## Architecture
 
