@@ -6,8 +6,8 @@ jobs:
   release:
     runs-on: macos-15
     steps:
-      - uses: actions/checkout@v4
-      - uses: astral-sh/setup-uv@v6
+      - uses: actions/checkout@v7
+      - uses: astral-sh/setup-uv@v7
       - name: Import Developer ID certificate
         env:
           CERTIFICATE: ${{ secrets.DEVELOPER_ID_CERTIFICATE_P12 }}
