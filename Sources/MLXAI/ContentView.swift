@@ -74,7 +74,7 @@ struct ContentView: View {
     private var actions: some View {
         VStack(spacing: 9) {
             HStack(spacing: 8) {
-                Button(action: model.primaryAction) {
+                Button(action: { model.primaryAction() }) {
                     HStack {
                         if model.isWorking { ProgressView().controlSize(.small) }
                         Image(systemName: primaryIcon)
@@ -85,15 +85,15 @@ struct ContentView: View {
                 .disabled(model.isWorking || model.status.state == .external || model.status.state == .conflict)
 
                 if model.status.state == .running {
-                    Button(action: model.restart) { Image(systemName: "arrow.clockwise") }
+                    Button(action: { model.restart() }) { Image(systemName: "arrow.clockwise") }
                         .buttonStyle(.bordered).controlSize(.large).help("Restart server")
                         .disabled(model.isWorking)
                 }
             }
             HStack(spacing: 6) {
-                quickButton("Copy API", "doc.on.doc", model.copyEndpoint)
-                quickButton("Check", "checkmark.circle", model.checkAPI)
-                quickButton("Logs", "text.alignleft", model.openLog)
+                quickButton("Copy API", "doc.on.doc") { model.copyEndpoint() }
+                quickButton("Check", "checkmark.circle") { model.checkAPI() }
+                quickButton("Logs", "text.alignleft") { model.openLog() }
             }
         }.padding(.top, 12)
     }
@@ -171,12 +171,12 @@ struct SetupView: View {
             }.font(.caption).frame(maxWidth: .infinity, alignment: .leading).padding(12)
                 .background(Color.primary.opacity(0.045), in: RoundedRectangle(cornerRadius: 10))
             if let error = model.errorMessage { Text(error).font(.caption).foregroundStyle(.red).fixedSize(horizontal: false, vertical: true) }
-            Button(action: model.installRuntime) {
+            Button(action: { model.installRuntime() }) {
                 HStack { if model.isInstallingRuntime { ProgressView().controlSize(.small) }; Text(model.isInstallingRuntime ? "Installing…" : "Install Runtime") }
                     .frame(maxWidth: .infinity)
             }.buttonStyle(.borderedProminent).controlSize(.large).disabled(model.isInstallingRuntime)
             Text(model.setupDetail).font(.caption2).foregroundStyle(.tertiary).multilineTextAlignment(.center)
-            HStack { Button("Quit") { NSApp.terminate(nil) }.buttonStyle(.plain); Spacer(); Button("Check Again", action: model.checkRuntime).buttonStyle(.plain) }
+            HStack { Button("Quit") { NSApp.terminate(nil) }.buttonStyle(.plain); Spacer(); Button("Check Again") { model.checkRuntime() }.buttonStyle(.plain) }
                 .font(.caption).foregroundStyle(.secondary)
         }.frame(minHeight: 330)
     }
@@ -188,10 +188,10 @@ struct SettingsView: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 16) {
             HStack { Text("MLX AI Settings").font(.title2.bold()); Spacer(); Button("Done") { dismiss() } }
-            Toggle("Launch menu app at login", isOn: Binding(get: { model.configuration.launchAtLogin }, set: model.updateLaunchAtLogin))
-            Toggle("Start server at login", isOn: Binding(get: { model.configuration.startServerAtLogin }, set: model.updateServerAtLogin))
+            Toggle("Launch menu app at login", isOn: Binding(get: { model.configuration.launchAtLogin }, set: { model.updateLaunchAtLogin($0) }))
+            Toggle("Start server at login", isOn: Binding(get: { model.configuration.startServerAtLogin }, set: { model.updateServerAtLogin($0) }))
             Text("Starting the server loads approximately 5 GB into memory.").font(.caption).foregroundStyle(.secondary)
-            Toggle("Notify me about failures", isOn: Binding(get: { model.configuration.failureNotifications }, set: model.updateNotifications))
+            Toggle("Notify me about failures", isOn: Binding(get: { model.configuration.failureNotifications }, set: { model.updateNotifications($0) }))
             Divider()
             LabeledContent("Model", value: model.configuration.model)
             LabeledContent("Endpoint", value: model.configuration.endpoint.absoluteString)
@@ -199,9 +199,9 @@ struct SettingsView: View {
             Divider()
             HStack {
                 VStack(alignment: .leading) { Text("Command-line tool"); if let message = model.cliInstallMessage { Text(message).font(.caption).foregroundStyle(.secondary) } }
-                Spacer(); Button("Install CLI", action: model.installCLI)
+                Spacer(); Button("Install CLI") { model.installCLI() }
             }
-            HStack { Text("Updates"); Spacer(); Button("Check for Updates", action: model.checkForUpdates) }
+            HStack { Text("Updates"); Spacer(); Button("Check for Updates") { model.checkForUpdates() } }
         }.padding(22).frame(width: 480)
     }
 }
@@ -213,7 +213,7 @@ struct DiagnosticsView: View {
         VStack(alignment: .leading, spacing: 14) {
             HStack { Text("Diagnostics").font(.title2.bold()); Spacer(); Button("Done") { dismiss() } }
             ScrollView { Text(model.diagnostics.joined(separator: "\n")).font(.system(.body, design: .monospaced)).textSelection(.enabled).frame(maxWidth: .infinity, alignment: .leading) }
-            HStack { Button("Copy") { NSPasteboard.general.clearContents(); NSPasteboard.general.setString(model.diagnostics.joined(separator: "\n"), forType: .string) }; Spacer(); Button("Open Log", action: model.openLog) }
+            HStack { Button("Copy") { NSPasteboard.general.clearContents(); NSPasteboard.general.setString(model.diagnostics.joined(separator: "\n"), forType: .string) }; Spacer(); Button("Open Log") { model.openLog() } }
         }.padding(22).frame(width: 600, height: 380)
     }
 }
