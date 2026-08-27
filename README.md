@@ -27,17 +27,14 @@ MLX AI starts, monitors, and stops an OpenAI-compatible [`mlx_lm.server`](https:
 
 <table>
   <tr>
-    <td align="center"><strong>Running · Dark</strong></td>
-    <td align="center"><strong>Stopped · Light</strong></td>
+    <td align="center"><strong>Running on macOS</strong></td>
+    <td align="center"><strong>Stopped on macOS</strong></td>
   </tr>
   <tr>
-    <td><img src="docs/screenshots/mlx-ai-running-dark.png" alt="MLX AI menu showing a healthy running model in dark mode" width="336"></td>
-    <td><img src="docs/screenshots/mlx-ai-stopped-light.png" alt="MLX AI menu showing the stopped state in light mode" width="336"></td>
+    <td><img src="docs/screenshots/mlx-ai-live-running-mac.png" alt="Live screenshot of MLX AI running on the maintainer's Mac" width="425"></td>
+    <td><img src="docs/screenshots/mlx-ai-live-mac.png" alt="Live screenshot of MLX AI stopped on the maintainer's Mac" width="375"></td>
   </tr>
 </table>
-
-<p align="center"><strong>Private, guided first-run setup</strong></p>
-<p align="center"><img src="docs/screenshots/mlx-ai-first-run.png" alt="MLX AI first-run runtime installation screen" width="336"></p>
 
 ## Requirements
 
@@ -79,12 +76,6 @@ make dmg
 For a clean-Mac bootstrap, place arm64 `uv` on `PATH` or set `UV_BINARY=/path/to/uv`. Without it, the app can adopt an existing environment but cannot install a new one.
 
 Local builds are ad-hoc signed. Release signing uses `MACOS_SIGN_IDENTITY`; see [RELEASING.md](RELEASING.md).
-
-Maintainers can regenerate the production UI screenshots without capturing the desktop:
-
-```sh
-'.build/MLX AI.app/Contents/MacOS/MLXAI' --export-screenshots "$PWD/docs/screenshots"
-```
 
 ## Architecture
 
